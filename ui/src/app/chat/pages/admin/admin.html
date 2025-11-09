@@ -1,0 +1,84 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button routerLink="/chat">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Admin panel</span>
+</mat-toolbar>
+
+<div class="admin-wrapper">
+
+  <!-- ADD CONTEXT -->
+  <mat-card class="admin-card">
+    <h2>Add context (URL)</h2>
+    <div class="row">
+      <mat-form-field appearance="outline" class="flex1">
+        <mat-label>Source URL</mat-label>
+        <input matInput [(ngModel)]="addUrl" placeholder="https://tu-sofia.bg/...">
+      </mat-form-field>
+      <button mat-flat-button color="primary"
+              (click)="onAddContext()"
+              [disabled]="addLoading || !addUrl.trim()">
+        {{ addLoading ? 'Adding…' : 'Add' }}
+      </button>
+    </div>
+
+    <p class="result" *ngIf="addResult">
+      {{ addResult }}
+    </p>
+
+    <p class="error" *ngIf="addError">
+      {{ addError }}
+    </p>
+  </mat-card>
+
+  <!-- DELETE -->
+  <mat-card class="admin-card">
+    <h2>Delete context (by URL)</h2>
+    <div class="row">
+      <mat-form-field appearance="outline" class="flex1">
+        <mat-label>URL to delete</mat-label>
+        <input matInput [(ngModel)]="deleteUrl" placeholder="https://tu-sofia.bg/...">
+      </mat-form-field>
+      <button mat-stroked-button color="warn" (click)="onDeleteContext()" [disabled]="!deleteUrl.trim()">
+        Delete
+      </button>
+    </div>
+    <p class="result" *ngIf="deleteResult">{{ deleteResult }}</p>
+  </mat-card>
+
+  <!-- CONFIG -->
+  <mat-card class="admin-card">
+    <h2>Retrieval config</h2>
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label>Top K</mat-label>
+        <mat-select [(ngModel)]="selectedTopK">
+          <mat-option *ngFor="let k of topKOptions" [value]="k">
+            {{ k }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Similarity threshold</mat-label>
+        <mat-select [(ngModel)]="selectedSimilarity">
+          <mat-option *ngFor="let s of similarityOptions" [value]="s">
+            {{ s }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" (click)="onSaveConfig()">
+        Save config
+      </button>
+    </div>
+    <p class="hint">TopK should be 3/5/7. Similarity in 0.65 – 0.8 range.</p>
+  </mat-card>
+
+  <!-- STATS placeholder -->
+  <mat-card class="admin-card">
+    <h2>Statistics</h2>
+    <p>Here we’ll show number of documents, last crawl, most asked questions, etc.</p>
+  </mat-card>
+
+</div>

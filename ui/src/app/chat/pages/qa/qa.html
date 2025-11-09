@@ -1,0 +1,13 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button routerLink="/chat">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>Q / A</span>
+</mat-toolbar>
+
+<div class="qa-wrapper">
+  <mat-card *ngFor="let item of faqs" class="qa-card">
+    <h3>{{ item.q }}</h3>
+    <p>{{ item.a }}</p>
+  </mat-card>
+</div>

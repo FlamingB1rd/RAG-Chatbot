@@ -1,0 +1,10 @@
+.qa-wrapper {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qa-card h3 {
+  margin-bottom: 6px;
+}

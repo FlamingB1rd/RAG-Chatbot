@@ -1,0 +1,33 @@
+.admin-wrapper {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-card {
+  padding-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.flex1 {
+  flex: 1 1 auto;
+}
+
+.result {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #111827;
+  white-space: pre-wrap;
+}
+
+.error {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #b91c1c;
+}
