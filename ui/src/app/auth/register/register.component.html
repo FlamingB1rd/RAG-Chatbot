@@ -1,0 +1,76 @@
+<div class="auth-wrapper">
+  <mat-card>
+    <h1>Регистрация</h1>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Потребителско име</mat-label>
+        <input matInput formControlName="username" autocomplete="username" />
+        <mat-error *ngIf="form.controls.username.hasError('required')">
+          Попълнете потребителско име.
+        </mat-error>
+        <mat-error *ngIf="form.controls.username.hasError('minlength')">
+          Минимум 3 символа.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Имейл</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email" />
+        <mat-error *ngIf="form.controls.email.hasError('required')">
+          Попълнете имейл адрес.
+        </mat-error>
+        <mat-error *ngIf="form.controls.email.hasError('email')">
+          Невалиден имейл адрес.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Парола</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          autocomplete="new-password"
+        />
+        <mat-error *ngIf="form.controls.password.hasError('required')">
+          Попълнете парола.
+        </mat-error>
+        <mat-error *ngIf="form.controls.password.hasError('minlength')">
+          Минимум 6 символа.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Потвърдете паролата</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="confirmPassword"
+          autocomplete="new-password"
+        />
+        <mat-error *ngIf="form.controls.confirmPassword.hasError('required')">
+          Потвърдете паролата.
+        </mat-error>
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="submitting || form.invalid"
+      >
+        {{ submitting ? 'Регистриране...' : 'Създай профил' }}
+      </button>
+
+      <p class="hint">
+        Вече имате профил?
+        <a routerLink="/login">Влезте тук.</a>
+      </p>
+
+      <p *ngIf="error" class="error">
+        {{ error }}
+      </p>
+    </form>
+  </mat-card>
+</div>
+

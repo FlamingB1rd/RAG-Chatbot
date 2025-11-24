@@ -1,84 +1,498 @@
-<mat-toolbar color="primary">
-  <button mat-icon-button routerLink="/chat">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span>Admin panel</span>
-</mat-toolbar>
+<div class="admin-container">
+  <!-- Header -->
+  <div class="admin-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <mat-icon>admin_panel_settings</mat-icon>
+      </div>
+      <div class="header-text">
+        <h1>Администраторски панел</h1>
+        <p>Управление на контекстната база данни и настройки на чатбота</p>
+      </div>
+    </div>
+  </div>
 
-<div class="admin-wrapper">
+  <div class="admin-content">
+    <!-- Left Column -->
+    <div class="admin-main">
+      <!-- Add Context Section -->
+      <div class="admin-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">add_link</mat-icon>
+          <h2>Добави контекст от URL</h2>
+        </div>
+        <div class="section-body">
+          <div class="input-group">
+            <mat-form-field appearance="outline" class="url-input">
+              <mat-label>URL адрес</mat-label>
+              <input matInput 
+                     [(ngModel)]="addUrl" 
+                     placeholder="https://tu-sofia.bg/..."
+                     [disabled]="addLoading">
+            </mat-form-field>
+            <button mat-flat-button 
+                    color="primary" 
+                    class="action-button"
+                    (click)="onAddContext()"
+                    [disabled]="addLoading || !addUrl.trim()">
+              @if (addLoading) {
+                <mat-icon class="spinning">refresh</mat-icon>
+                <span>Добавяне…</span>
+              } @else {
+                <mat-icon>add</mat-icon>
+                <span>Добави</span>
+              }
+            </button>
+          </div>
+          @if (addResult) {
+            <div class="success-message">
+              <mat-icon>check_circle</mat-icon>
+              <span>Успешно добавено!</span>
+            </div>
+          }
+          @if (addError) {
+            <div class="error-message">
+              <mat-icon>error</mat-icon>
+              <span>{{ addError }}</span>
+            </div>
+          }
+        </div>
+      </div>
 
-  <!-- ADD CONTEXT -->
-  <mat-card class="admin-card">
-    <h2>Add context (URL)</h2>
-    <div class="row">
-      <mat-form-field appearance="outline" class="flex1">
-        <mat-label>Source URL</mat-label>
-        <input matInput [(ngModel)]="addUrl" placeholder="https://tu-sofia.bg/...">
-      </mat-form-field>
-      <button mat-flat-button color="primary"
-              (click)="onAddContext()"
-              [disabled]="addLoading || !addUrl.trim()">
-        {{ addLoading ? 'Adding…' : 'Add' }}
-      </button>
+      <!-- URLs List Section -->
+      <div class="admin-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">list</mat-icon>
+          <h2>URL адреси в базата данни</h2>
+          <button mat-icon-button 
+                  class="refresh-button"
+                  (click)="loadUrls()"
+                  [disabled]="urlsLoading">
+            <mat-icon [class.spinning]="urlsLoading">refresh</mat-icon>
+          </button>
+        </div>
+        <div class="section-body">
+          @if (urlsLoading) {
+            <div class="loading-state">
+              <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+              <span>Зареждане...</span>
+            </div>
+          } @else if (urls.length === 0) {
+            <div class="empty-state">
+              <mat-icon>inbox</mat-icon>
+              <p>Няма добавени URL адреси</p>
+            </div>
+          } @else {
+            <div class="urls-list">
+              @for (url of urls; track url) {
+                <div class="url-item" 
+                     [class.selected]="selectedUrl === url"
+                     (click)="selectUrl(url)">
+                  <mat-icon class="url-icon">link</mat-icon>
+                  <span class="url-text">{{ url }}</span>
+                  <mat-icon class="chevron">chevron_right</mat-icon>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Config Section -->
+      <div class="admin-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">settings</mat-icon>
+          <h2>Настройки на чатбота</h2>
+        </div>
+        <div class="section-body">
+          <div class="config-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Top K</mat-label>
+              <mat-select [(ngModel)]="selectedTopK">
+                @for (k of topKOptions; track k) {
+                  <mat-option [value]="k">{{ k }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Праг на прилика</mat-label>
+              <mat-select [(ngModel)]="selectedSimilarity">
+                @for (s of similarityOptions; track s) {
+                  <mat-option [value]="s">{{ s }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Cron израз за автоматично обновяване</mat-label>
+              <input matInput 
+                     [(ngModel)]="cronExpression" 
+                     placeholder="0 0 9 ? * FRI"
+                     [disabled]="configLoading">
+              <mat-hint>Формат: секунда минута час ден месец ден_от_седмицата (например: 0 0 9 ? * FRI = всеки петък в 9:00)</mat-hint>
+            </mat-form-field>
+          </div>
+          <div class="config-actions">
+            <button mat-flat-button 
+                    color="primary"
+                    (click)="onSaveConfig()"
+                    [disabled]="configLoading">
+              @if (configLoading) {
+                <mat-icon class="spinning">refresh</mat-icon>
+                <span>Запазване…</span>
+              } @else {
+                <mat-icon>save</mat-icon>
+                <span>Запази настройки</span>
+              }
+            </button>
+          </div>
+          @if (configResult) {
+            <div class="success-message">
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ configResult }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Scheduled URLs Section -->
+      <div class="admin-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">schedule</mat-icon>
+          <h2>Планирани URL адреси за автоматично обновяване</h2>
+          <button mat-icon-button 
+                  class="refresh-button"
+                  (click)="loadScheduledUrls()"
+                  [disabled]="scheduledUrlsLoading">
+            <mat-icon [class.spinning]="scheduledUrlsLoading">refresh</mat-icon>
+          </button>
+        </div>
+        <div class="section-body">
+          <!-- Add Scheduled URL Form -->
+          <div class="input-group" style="margin-bottom: 16px;">
+            <mat-form-field appearance="outline" class="url-input">
+              <mat-label>URL адрес</mat-label>
+              <input matInput 
+                     [(ngModel)]="newScheduledUrl" 
+                     placeholder="https://tu-sofia.bg/..."
+                     [disabled]="scheduledUrlAdding">
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="flex: 1;">
+              <mat-label>Описание (по избор)</mat-label>
+              <input matInput 
+                     [(ngModel)]="newScheduledDescription" 
+                     placeholder="Описание на URL адреса"
+                     [disabled]="scheduledUrlAdding">
+            </mat-form-field>
+            <button mat-flat-button 
+                    color="primary" 
+                    class="action-button"
+                    (click)="onAddScheduledUrl()"
+                    [disabled]="scheduledUrlAdding || !newScheduledUrl.trim()">
+              @if (scheduledUrlAdding) {
+                <mat-icon class="spinning">refresh</mat-icon>
+                <span>Добавяне…</span>
+              } @else {
+                <mat-icon>add</mat-icon>
+                <span>Добави</span>
+              }
+            </button>
+          </div>
+
+          <!-- Scheduled URLs List -->
+          @if (scheduledUrlsLoading) {
+            <div class="loading-state">
+              <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+              <span>Зареждане...</span>
+            </div>
+          } @else if (scheduledUrls.length === 0) {
+            <div class="empty-state">
+              <mat-icon>schedule</mat-icon>
+              <p>Няма планирани URL адреси</p>
+            </div>
+          } @else {
+            <div class="urls-list">
+              @for (scheduledUrl of scheduledUrls; track scheduledUrl.id) {
+                <div class="url-item">
+                  <mat-icon class="url-icon" [style.color]="scheduledUrl.isActive ? '#5899d3' : '#787f8d'">
+                    {{ scheduledUrl.isActive ? 'link' : 'link_off' }}
+                  </mat-icon>
+                  <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                    <span class="url-text" [style.opacity]="scheduledUrl.isActive ? '1' : '0.6'">
+                      {{ scheduledUrl.url }}
+                    </span>
+                    @if (scheduledUrl.description) {
+                      <span style="font-size: 0.85rem; color: #787f8d;">
+                        {{ scheduledUrl.description }}
+                      </span>
+                    }
+                  </div>
+                  <button mat-icon-button 
+                          [color]="scheduledUrl.isActive ? 'primary' : ''"
+                          (click)="onToggleScheduledUrl(scheduledUrl.id)"
+                          matTooltip="{{ scheduledUrl.isActive ? 'Деактивирай' : 'Активирай' }}">
+                    <mat-icon>{{ scheduledUrl.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                  </button>
+                  <button mat-icon-button 
+                          color="warn"
+                          (click)="onDeleteScheduledUrl(scheduledUrl.id, scheduledUrl.url)"
+                          matTooltip="Изтрий">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Users Management Section -->
+      <div class="admin-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">people</mat-icon>
+          <h2>Управление на потребители</h2>
+          <button mat-icon-button 
+                  class="refresh-button"
+                  (click)="loadUsers()"
+                  [disabled]="usersLoading">
+            <mat-icon [class.spinning]="usersLoading">refresh</mat-icon>
+          </button>
+        </div>
+        <div class="section-body">
+          @if (usersLoading) {
+            <div class="loading-state">
+              <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+              <span>Зареждане...</span>
+            </div>
+          } @else if (users.length === 0) {
+            <div class="empty-state">
+              <mat-icon>people_outline</mat-icon>
+              <p>Няма регистрирани потребители</p>
+            </div>
+          } @else {
+            <div class="users-table-container">
+              <table mat-table [dataSource]="users" class="users-table">
+                <ng-container matColumnDef="username">
+                  <th mat-header-cell *matHeaderCellDef>Потребителско име</th>
+                  <td mat-cell *matCellDef="let user">{{ user.username }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="email">
+                  <th mat-header-cell *matHeaderCellDef>Имейл</th>
+                  <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="roles">
+                  <th mat-header-cell *matHeaderCellDef>Роля</th>
+                  <td mat-cell *matCellDef="let user">
+                    <mat-form-field appearance="outline" class="role-select-field">
+                      <mat-select 
+                          [value]="getUserRole(user.id, user.roles)"
+                          [disabled]="roleUpdating === user.id || rolesLoading"
+                          (selectionChange)="onRoleChange(user.id, $event.value, user.roles)">
+                        @if (rolesLoading) {
+                          <mat-option disabled>
+                            <span>Зареждане на роли...</span>
+                          </mat-option>
+                        } @else {
+                          @for (role of availableRoles; track role) {
+                            <mat-option [value]="role">
+                              {{ getRoleDisplayName([role]) }}
+                            </mat-option>
+                          }
+                        }
+                      </mat-select>
+                      @if (roleUpdating === user.id) {
+                        <mat-icon matPrefix class="spinning">refresh</mat-icon>
+                      }
+                    </mat-form-field>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Действия</th>
+                  <td mat-cell *matCellDef="let user">
+                    <div class="action-buttons">
+                      <button mat-icon-button 
+                              color="warn"
+                              [disabled]="userDeleting === user.id"
+                              (click)="deleteUser(user.id, user.username)"
+                              matTooltip="Изтрий потребител">
+                        @if (userDeleting === user.id) {
+                          <mat-icon class="spinning">refresh</mat-icon>
+                        } @else {
+                          <mat-icon>delete</mat-icon>
+                        }
+                      </button>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="usersColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: usersColumns;"></tr>
+              </table>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Audit Logs Section -->
+      <div class="admin-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">history</mat-icon>
+          <h2>История на промените</h2>
+          <button mat-icon-button 
+                  class="refresh-button"
+                  (click)="loadAuditLogs()"
+                  [disabled]="logsLoading">
+            <mat-icon [class.spinning]="logsLoading">refresh</mat-icon>
+          </button>
+        </div>
+        <div class="section-body">
+          @if (logsLoading) {
+            <div class="loading-state">
+              <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+              <span>Зареждане...</span>
+            </div>
+          } @else if (auditLogs.length === 0) {
+            <div class="empty-state">
+              <mat-icon>history</mat-icon>
+              <p>Няма записани промени</p>
+            </div>
+          } @else {
+            <div class="audit-logs-container">
+              @for (log of auditLogs; track log.id) {
+                <div class="audit-log-item">
+                  <div class="log-header">
+                    <div class="log-action">
+                      <mat-icon class="log-icon">{{ 
+                        log.actionType === 'CONFIG_UPDATE' ? 'settings' :
+                        log.actionType === 'USER_ROLE_CHANGE' ? 'swap_horiz' :
+                        log.actionType === 'USER_DELETE' ? 'delete' :
+                        log.actionType === 'FAQ_CREATE' ? 'add' :
+                        log.actionType === 'FAQ_DELETE' ? 'delete' :
+                        log.actionType === 'URL_DELETE' ? 'link_off' : 'info'
+                      }}</mat-icon>
+                      <span class="log-action-type">{{ getActionDisplayName(log.actionType) }}</span>
+                      <span class="log-entity-type">({{ getEntityDisplayName(log.entityType) }})</span>
+                    </div>
+                    <div class="log-date">
+                      {{ log.performedAt | date:'dd.MM.yyyy HH:mm' }}
+                    </div>
+                  </div>
+                  <div class="log-description">{{ log.description }}</div>
+                  <div class="log-details">
+                    <div class="log-user">
+                      <mat-icon class="user-icon">person</mat-icon>
+                      <span>{{ log.performedBy }}</span>
+                    </div>
+                    @if (log.oldValue || log.newValue) {
+                      <div class="log-changes">
+                        @if (log.oldValue) {
+                          <div class="log-change-item">
+                            <span class="change-label">Преди:</span>
+                            <span class="change-value old">{{ log.oldValue }}</span>
+                          </div>
+                        }
+                        @if (log.newValue) {
+                          <div class="log-change-item">
+                            <span class="change-label">{{ log.oldValue ? 'След:' : 'Добавено:' }}</span>
+                            <span class="change-value new">{{ log.newValue }}</span>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Upgrade Section -->
+      <div class="admin-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">upgrade</mat-icon>
+          <h2>Обновяване</h2>
+        </div>
+        <div class="section-body">
+          <p class="section-description">
+            Обновяване на всички документи в базата данни (например, пре-вграждане на вектори).
+          </p>
+          <button mat-stroked-button 
+                  color="primary"
+                  (click)="onUpgrade()"
+                  [disabled]="upgradeLoading">
+            @if (upgradeLoading) {
+              <mat-icon class="spinning">refresh</mat-icon>
+              <span>Обновяване…</span>
+            } @else {
+              <mat-icon>upgrade</mat-icon>
+              <span>Обнови базата данни</span>
+            }
+          </button>
+          @if (upgradeResult) {
+            <div class="info-message">
+              <mat-icon>info</mat-icon>
+              <span>{{ upgradeResult }}</span>
+            </div>
+          }
+        </div>
+      </div>
     </div>
 
-    <p class="result" *ngIf="addResult">
-      {{ addResult }}
-    </p>
-
-    <p class="error" *ngIf="addError">
-      {{ addError }}
-    </p>
-  </mat-card>
-
-  <!-- DELETE -->
-  <mat-card class="admin-card">
-    <h2>Delete context (by URL)</h2>
-    <div class="row">
-      <mat-form-field appearance="outline" class="flex1">
-        <mat-label>URL to delete</mat-label>
-        <input matInput [(ngModel)]="deleteUrl" placeholder="https://tu-sofia.bg/...">
-      </mat-form-field>
-      <button mat-stroked-button color="warn" (click)="onDeleteContext()" [disabled]="!deleteUrl.trim()">
-        Delete
-      </button>
-    </div>
-    <p class="result" *ngIf="deleteResult">{{ deleteResult }}</p>
-  </mat-card>
-
-  <!-- CONFIG -->
-  <mat-card class="admin-card">
-    <h2>Retrieval config</h2>
-    <div class="row">
-      <mat-form-field appearance="outline">
-        <mat-label>Top K</mat-label>
-        <mat-select [(ngModel)]="selectedTopK">
-          <mat-option *ngFor="let k of topKOptions" [value]="k">
-            {{ k }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Similarity threshold</mat-label>
-        <mat-select [(ngModel)]="selectedSimilarity">
-          <mat-option *ngFor="let s of similarityOptions" [value]="s">
-            {{ s }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <button mat-flat-button color="primary" (click)="onSaveConfig()">
-        Save config
-      </button>
-    </div>
-    <p class="hint">TopK should be 3/5/7. Similarity in 0.65 – 0.8 range.</p>
-  </mat-card>
-
-  <!-- STATS placeholder -->
-  <mat-card class="admin-card">
-    <h2>Statistics</h2>
-    <p>Here we’ll show number of documents, last crawl, most asked questions, etc.</p>
-  </mat-card>
-
+    <!-- Right Sidebar -->
+    @if (selectedUrl) {
+      <div class="admin-sidebar">
+        <div class="sidebar-header">
+          <h3>Детайли за URL</h3>
+          <button mat-icon-button 
+                  class="close-button"
+                  (click)="closeSidebar()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="sidebar-content">
+          @if (contentLoading) {
+            <div class="loading-state">
+              <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+              <span>Зареждане...</span>
+            </div>
+          } @else if (urlContent) {
+            <div class="url-details">
+              <div class="url-display">
+                <mat-icon>link</mat-icon>
+                <a [href]="selectedUrl" target="_blank" class="url-link">{{ selectedUrl }}</a>
+              </div>
+              <div class="content-display">
+                <h4>Съдържание:</h4>
+                <div class="content-text">{{ urlContent.content }}</div>
+              </div>
+            </div>
+            <div class="sidebar-actions">
+              <button mat-flat-button 
+                      color="warn"
+                      (click)="onDeleteUrl()"
+                      [disabled]="deleteLoading">
+                @if (deleteLoading) {
+                  <mat-icon class="spinning">refresh</mat-icon>
+                  <span>Изтриване…</span>
+                } @else {
+                  <mat-icon>delete</mat-icon>
+                  <span>Изтрий от базата</span>
+                }
+              </button>
+            </div>
+          } @else if (contentError) {
+            <div class="error-message">
+              <mat-icon>error</mat-icon>
+              <span>{{ contentError }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
 </div>

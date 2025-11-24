@@ -1,6 +1,7 @@
 package com.tu.chatbot.model;
 
 import com.tu.chatbot.model.dto.LoginUserRequest;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +22,8 @@ import java.util.Set;
 @Entity
 @Table(name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username")
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
         })
 @Getter
 @Setter
@@ -39,6 +41,11 @@ public class Users {
     @NotBlank
     @Size(max = 120)
     private String password;
+
+    @NotBlank
+    @Size(max = 100)
+    @Column(unique = true)
+    private String email;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",

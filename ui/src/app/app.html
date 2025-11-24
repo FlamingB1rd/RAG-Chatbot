@@ -1,2 +1,88 @@
-<!-- src/app/app.html -->
-<router-outlet></router-outlet>
+<mat-toolbar color="primary">
+  <span class="brand" routerLink="/chat">TU-Sofia Rag Chatbot - Techno</span>
+  <span class="spacer"></span>
+
+  <!-- Desktop Navigation -->
+  <div class="desktop-nav">
+    <ng-container *ngIf="authState$ | async as authState; else guestLinks">
+      <button mat-button routerLink="/chat">Чат</button>
+      <button mat-button routerLink="/qa">Q&A</button>
+      <button
+        mat-button
+        routerLink="/admin"
+        *ngIf="isAdmin(authState)"
+      >
+        Админ
+      </button>
+      <div class="user-info">
+        <mat-icon class="user-icon">account_circle</mat-icon>
+        <span class="user-name">{{ authState.username }}</span>
+      </div>
+      <button mat-stroked-button color="accent" (click)="logout()">
+        Изход
+      </button>
+    </ng-container>
+
+    <ng-template #guestLinks>
+      <button mat-button routerLink="/login">Вход</button>
+      <button mat-stroked-button color="accent" routerLink="/register">
+        Регистрация
+      </button>
+    </ng-template>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-nav">
+    <ng-container *ngIf="authState$ | async as authState; else guestMobileMenu">
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item routerLink="/chat">
+          <mat-icon>chat</mat-icon>
+          <span>Чат</span>
+        </button>
+        <button mat-menu-item routerLink="/qa">
+          <mat-icon>quiz</mat-icon>
+          <span>Q&A</span>
+        </button>
+        <button
+          mat-menu-item
+          routerLink="/admin"
+          *ngIf="isAdmin(authState)">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span>Админ</span>
+        </button>
+        <mat-divider></mat-divider>
+        <div class="menu-user-info">
+          <mat-icon class="menu-user-icon">account_circle</mat-icon>
+          <span class="menu-user-name">{{ authState.username }}</span>
+        </div>
+        <button mat-menu-item class="logout-item" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Изход</span>
+        </button>
+      </mat-menu>
+    </ng-container>
+
+    <ng-template #guestMobileMenu>
+      <button mat-icon-button [matMenuTriggerFor]="guestMenu" aria-label="Menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <mat-menu #guestMenu="matMenu">
+        <button mat-menu-item routerLink="/login">
+          <mat-icon>login</mat-icon>
+          <span>Вход</span>
+        </button>
+        <button mat-menu-item routerLink="/register">
+          <mat-icon>person_add</mat-icon>
+          <span>Регистрация</span>
+        </button>
+      </mat-menu>
+    </ng-template>
+  </div>
+</mat-toolbar>
+
+<div class="app-shell">
+  <router-outlet></router-outlet>
+</div>

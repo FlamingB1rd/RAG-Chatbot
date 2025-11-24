@@ -1,0 +1,46 @@
+<div class="auth-wrapper">
+  <mat-card>
+    <h1>Вход</h1>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Потребителско име</mat-label>
+        <input matInput formControlName="username" autocomplete="username" />
+        <mat-error *ngIf="form.controls.username.hasError('required')">
+          Попълнете потребителско име.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Парола</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+        />
+        <mat-error *ngIf="form.controls.password.hasError('required')">
+          Попълнете парола.
+        </mat-error>
+      </mat-form-field>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="submitting"
+      >
+        {{ submitting ? 'Влизане...' : 'Вход' }}
+      </button>
+
+      <p class="hint">
+        Нямате профил?
+        <a routerLink="/register">Регистрирайте се.</a>
+      </p>
+
+      <p *ngIf="error" class="error">
+        {{ error }}
+      </p>
+    </form>
+  </mat-card>
+</div>
+

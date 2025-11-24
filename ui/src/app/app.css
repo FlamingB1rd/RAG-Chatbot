@@ -1,0 +1,279 @@
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #507abc 0%, #5899d3 100%) !important;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(80, 122, 188, 0.25);
+  padding: 0 16px;
+}
+
+.brand {
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
+  transition: opacity 0.2s;
+}
+
+.brand:hover {
+  opacity: 0.9;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* User info display - clearly non-clickable */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 0.5rem;
+  padding: 4px 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.875rem;
+  cursor: default;
+  user-select: none;
+}
+
+.user-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.user-name {
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+/* Uniform button styling - all navigation buttons look the same */
+mat-toolbar button[mat-button] {
+  color: #fff;
+  transition: all 0.2s;
+  border-radius: 4px;
+  margin: 0 2px;
+  font-weight: 500;
+}
+
+mat-toolbar button[mat-button]:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+mat-toolbar button[mat-stroked-button] {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+  transition: all 0.2s;
+  border-radius: 4px;
+}
+
+mat-toolbar button[mat-stroked-button]:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Desktop Navigation */
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mobile-nav {
+  display: none;
+}
+
+/* Mobile Menu Styles */
+.menu-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 0.9rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  margin-bottom: 4px;
+  border-radius: 4px 4px 0 0;
+}
+
+.menu-user-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+  color: #5899d3;
+}
+
+.menu-user-name {
+  font-weight: 600;
+  color: #4a5568;
+}
+
+/* Menu panel styling */
+::ng-deep .mat-mdc-menu-panel {
+  min-width: 260px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  margin-top: 8px;
+  padding: 4px 0;
+}
+
+::ng-deep .mat-mdc-menu-content {
+  padding: 8px 16px !important;
+}
+
+  /* Menu item styling */
+::ng-deep .mat-mdc-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  transition: all 0.2s ease;
+  min-height: 48px;
+}
+
+::ng-deep .mat-mdc-menu-item:hover {
+  background: linear-gradient(135deg, rgba(88, 153, 211, 0.08) 0%, rgba(80, 122, 188, 0.12) 100%);
+}
+
+::ng-deep .mat-mdc-menu-item:active {
+  background: linear-gradient(135deg, rgba(88, 153, 211, 0.15) 0%, rgba(80, 122, 188, 0.2) 100%);
+}
+
+::ng-deep .mat-mdc-menu-item mat-icon {
+  margin: 0;
+  width: 22px;
+  height: 22px;
+  font-size: 22px;
+  color: #5899d3;
+  transition: color 0.2s ease;
+}
+
+::ng-deep .mat-mdc-menu-item:hover mat-icon {
+  color: #507abc;
+}
+
+::ng-deep .mat-mdc-menu-item span {
+  font-weight: 500;
+  color: #4a5568;
+  transition: color 0.2s ease;
+}
+
+::ng-deep .mat-mdc-menu-item:hover span {
+  color: #2d3748;
+}
+
+/* Logout button special styling - target by icon content */
+::ng-deep .mat-mdc-menu-item mat-icon:last-child {
+  color: #5899d3;
+}
+
+/* Special styling for logout item - we'll add a class in HTML if needed */
+::ng-deep .mat-mdc-menu-item.logout-item {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  margin-top: 4px;
+}
+
+::ng-deep .mat-mdc-menu-item.logout-item mat-icon {
+  color: #dc3545;
+}
+
+::ng-deep .mat-mdc-menu-item.logout-item:hover {
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.08) 0%, rgba(220, 53, 69, 0.12) 100%);
+}
+
+::ng-deep .mat-mdc-menu-item.logout-item:hover mat-icon {
+  color: #c82333;
+}
+
+/* Divider styling */
+::ng-deep .mat-mdc-menu-panel mat-divider {
+  margin: 8px 0;
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  mat-toolbar {
+    padding: 0 8px;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    min-height: 56px;
+    height: 56px;
+  }
+
+  .brand {
+    font-size: 1.1rem;
+  }
+
+  /* Hide desktop navigation on mobile */
+  .desktop-nav {
+    display: none;
+  }
+
+  /* Show mobile menu on mobile */
+  .mobile-nav {
+    display: block;
+  }
+
+  .mobile-nav button[mat-icon-button] {
+    color: #fff;
+  }
+
+  .mobile-nav button[mat-icon-button]:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.app-shell {
+  min-height: calc(100vh - 64px);
+}
+
+/* Global button icon and text alignment */
+button mat-icon + span,
+button span + mat-icon {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+button mat-icon {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+button span {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+/* Ensure buttons with icons and text are properly aligned */
+button[mat-flat-button],
+button[mat-stroked-button],
+button[mat-button] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+button[mat-flat-button] mat-icon,
+button[mat-stroked-button] mat-icon,
+button[mat-button] mat-icon {
+  margin: 0;
+  vertical-align: middle;
+}
+
+button[mat-flat-button] span,
+button[mat-stroked-button] span,
+button[mat-button] span {
+  vertical-align: middle;
+  line-height: 1;
+}

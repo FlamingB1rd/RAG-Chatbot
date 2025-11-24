@@ -1,13 +1,126 @@
-<mat-toolbar color="primary">
-  <button mat-icon-button routerLink="/chat">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <span>Q / A</span>
-</mat-toolbar>
+<div class="qa-container">
+  <div class="qa-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <mat-icon>quiz</mat-icon>
+      </div>
+      <div class="header-text">
+        <h1>Често задавани въпроси</h1>
+        <p>Намерете отговори на най-често задаваните въпроси за ТУ-София</p>
+      </div>
+    </div>
+  </div>
 
-<div class="qa-wrapper">
-  <mat-card *ngFor="let item of faqs" class="qa-card">
-    <h3>{{ item.q }}</h3>
-    <p>{{ item.a }}</p>
-  </mat-card>
+  <div class="qa-content">
+    @if (loading) {
+      <div class="loading-state">
+        <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+        <span>Зареждане на въпроси...</span>
+      </div>
+    } @else {
+      <div class="faq-list">
+        @for (item of faqs; track item.id) {
+          <div 
+            class="faq-item"
+            [class.expanded]="isExpanded($index)"
+            (click)="toggle($index)">
+            <div class="faq-question">
+              <div class="question-content">
+                <mat-icon class="question-icon">help_outline</mat-icon>
+                <span class="question-text">{{ item.question }}</span>
+              </div>
+              <div class="question-actions">
+                @if (authState$ | async; as authState) {
+                  @if (isAdmin(authState)) {
+                    <button mat-icon-button 
+                            class="delete-button"
+                            (click)="deleteFaq(item.id, $index, $event)"
+                            [disabled]="deleteLoading === item.id"
+                            matTooltip="Изтрий">
+                      @if (deleteLoading === item.id) {
+                        <mat-icon class="spinning">refresh</mat-icon>
+                      } @else {
+                        <mat-icon>delete</mat-icon>
+                      }
+                    </button>
+                  }
+                }
+                <mat-icon class="expand-icon" [class.rotated]="isExpanded($index)">
+                  expand_more
+                </mat-icon>
+              </div>
+            </div>
+            @if (isExpanded($index)) {
+              <div class="faq-answer">
+                <div class="answer-content">
+                  <mat-icon class="answer-icon">check_circle</mat-icon>
+                  <p>{{ item.answer }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        }
+        @if (faqs.length === 0) {
+          <div class="empty-state">
+            <mat-icon>inbox</mat-icon>
+            <p>Няма добавени въпроси и отговори</p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Admin Add FAQ Section -->
+    @if (authState$ | async; as authState) {
+      @if (isAdmin(authState)) {
+        <div class="admin-section">
+          @if (!showAddForm) {
+            <button mat-flat-button 
+                    color="primary" 
+                    class="add-faq-button"
+                    (click)="toggleAddForm()">
+              <mat-icon>add</mat-icon>
+              <span>Добави нов въпрос/отговор</span>
+            </button>
+          } @else {
+            <div class="add-faq-form">
+              <h3>Добави нов въпрос/отговор</h3>
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Въпрос</mat-label>
+                <textarea matInput 
+                          rows="2"
+                          [(ngModel)]="newQuestion"
+                          placeholder="Въведете въпроса..."></textarea>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Отговор</mat-label>
+                <textarea matInput 
+                          rows="4"
+                          [(ngModel)]="newAnswer"
+                          placeholder="Въведете отговора..."></textarea>
+              </mat-form-field>
+              <div class="form-actions">
+                <button mat-flat-button 
+                        color="primary"
+                        (click)="addFaq()"
+                        [disabled]="addLoading || !newQuestion.trim() || !newAnswer.trim()">
+                  @if (addLoading) {
+                    <mat-icon class="spinning">refresh</mat-icon>
+                    <span>Добавяне…</span>
+                  } @else {
+                    <mat-icon>check</mat-icon>
+                    <span>Добави</span>
+                  }
+                </button>
+                <button mat-stroked-button 
+                        (click)="cancelAdd()">
+                  <mat-icon>close</mat-icon>
+                  <span>Отказ</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
 </div>

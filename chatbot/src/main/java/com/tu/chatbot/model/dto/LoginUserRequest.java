@@ -1,4 +1,9 @@
 package com.tu.chatbot.model.dto;
 
-public record LoginUserRequest(String username, String password) {
+import jakarta.validation.constraints.NotBlank;
+
+public record LoginUserRequest(
+        @NotBlank String username,
+        @NotBlank String password
+) {
 }

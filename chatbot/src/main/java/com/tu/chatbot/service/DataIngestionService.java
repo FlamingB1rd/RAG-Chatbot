@@ -22,7 +22,7 @@ public class DataIngestionService {
     private final PgVectorStore vectorStore;
     private final JdbcTemplate jdbcTemplate;
 
-    public String ingestFromUrl(String url) {
+    public void ingestFromUrl(String url) {
         org.jsoup.nodes.Document htmlDoc;
         try {
             htmlDoc = Jsoup.connect(url)
@@ -33,23 +33,33 @@ public class DataIngestionService {
             throw new RuntimeException("Cannot fetch url: " + url, e);
         }
 
-        val content = extractFromDocument(htmlDoc);
-
-        val document = new Document(
-                UUID.randomUUID().toString(),
-                content,
-                Map.of("url", url)
-        );
+        val newContent = extractFromDocument(htmlDoc);
 
         if (existsByUrl(url)) {
-            val filter = String.format("url == %s", url);
-            vectorStore.delete(filter);
-            vectorStore.add(List.of(document));
-            return content;
-        }
+            val existingContent = getContentByUrl(url);
 
-        vectorStore.add(List.of(document));
-        return content;
+            val normalizedExisting = existingContent.trim().replaceAll("\\s+", " ");
+            val normalizedNew = newContent.trim().replaceAll("\\s+", " ");
+
+            if (!normalizedExisting.equals(normalizedNew)) {
+                val filter = String.format("url == '%s'", url.replace("'", "''"));
+                vectorStore.delete(filter);
+                
+                val document = new Document(
+                        UUID.randomUUID().toString(),
+                        newContent,
+                        Map.of("url", url)
+                );
+                vectorStore.add(List.of(document));
+            }
+        } else {
+            val document = new Document(
+                    UUID.randomUUID().toString(),
+                    newContent,
+                    Map.of("url", url)
+            );
+            vectorStore.add(List.of(document));
+        }
     }
 
     private String extractFromDocument(org.jsoup.nodes.Document doc) {
@@ -85,7 +95,7 @@ public class DataIngestionService {
         return element != null ? element.text() : "";
     }
 
-    private boolean existsByUrl(String url) {
+    public boolean existsByUrl(String url) {
         String sql = """
             SELECT COUNT(*) 
             FROM vector_store 
@@ -96,6 +106,29 @@ public class DataIngestionService {
         return count != null && count > 0;
     }
 
-    public void ingestFromPdf(MultipartFile file) {
+    public List<String> getAllUrls() {
+        String sql = """
+            SELECT DISTINCT metadata->>'url' as url
+            FROM vector_store
+            WHERE metadata->>'url' IS NOT NULL
+            ORDER BY url
+            """;
+        return jdbcTemplate.queryForList(sql, String.class);
+    }
+
+    public String getContentByUrl(String url) {
+        String sql = """
+            SELECT content
+            FROM vector_store
+            WHERE metadata->>'url' = ?
+            LIMIT 1
+            """;
+        List<String> results = jdbcTemplate.queryForList(sql, String.class, url);
+        return results.isEmpty() ? "" : results.get(0);
+    }
+
+    public void deleteByUrl(String url) {
+        String filter = String.format("url == '%s'", url.replace("'", "''"));
+        vectorStore.delete(filter);
     }
 }
