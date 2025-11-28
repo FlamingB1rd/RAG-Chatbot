@@ -1,5 +1,6 @@
 package com.tu.chatbot.service;
 
+import com.tu.chatbot.model.ScheduledUrl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,7 +28,7 @@ public class ScheduledIngestionService {
         log.info("Starting scheduled URL ingestion job");
         
         try {
-            List<com.tu.chatbot.model.ScheduledUrl> activeUrls = scheduledUrlService.getActiveScheduledUrls();
+            List<ScheduledUrl> activeUrls = scheduledUrlService.getActiveScheduledUrls();
             
             if (activeUrls.isEmpty()) {
                 log.info("No active scheduled URLs found. Skipping ingestion.");
@@ -39,15 +40,14 @@ public class ScheduledIngestionService {
             int successCount = 0;
             int failureCount = 0;
             
-            for (com.tu.chatbot.model.ScheduledUrl scheduledUrl : activeUrls) {
+            for (ScheduledUrl scheduledUrl : activeUrls) {
                 try {
                     log.info("Processing scheduled URL: {}", scheduledUrl.getUrl());
                     boolean urlExisted = dataIngestionService.existsByUrl(scheduledUrl.getUrl());
                     String existingContent = urlExisted ? dataIngestionService.getContentByUrl(scheduledUrl.getUrl()) : null;
                     
                     dataIngestionService.ingestFromUrl(scheduledUrl.getUrl());
-                    
-                    // Log whether content was updated or added
+
                     if (urlExisted && existingContent != null && !existingContent.isEmpty()) {
                         String newContent = dataIngestionService.getContentByUrl(scheduledUrl.getUrl());
                         String normalizedExisting = existingContent.trim().replaceAll("\\s+", " ");

@@ -34,7 +34,6 @@ public class AdminScheduledUrlController {
         String username = ((UserPrincipal) authentication.getPrincipal()).getUsername();
         ScheduledUrlResponse response = scheduledUrlService.createScheduledUrl(request, username);
 
-        // Log the creation
         auditLogService.log(
             "SCHEDULED_URL_CREATE",
             "SCHEDULED_URL",
@@ -59,7 +58,6 @@ public class AdminScheduledUrlController {
 
         scheduledUrlService.deleteScheduledUrl(id);
 
-        // Log the deletion
         String username = ((UserPrincipal) authentication.getPrincipal()).getUsername();
         auditLogService.log(
             "SCHEDULED_URL_DELETE",
@@ -85,7 +83,6 @@ public class AdminScheduledUrlController {
 
         ScheduledUrlResponse response = scheduledUrlService.toggleScheduledUrl(id);
 
-        // Log the toggle
         String username = ((UserPrincipal) authentication.getPrincipal()).getUsername();
         auditLogService.log(
             "SCHEDULED_URL_TOGGLE",

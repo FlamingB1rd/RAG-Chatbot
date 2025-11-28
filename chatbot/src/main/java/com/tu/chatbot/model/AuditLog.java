@@ -26,10 +26,10 @@ public class AuditLog {
     private Long id;
 
     @Column(name = "action_type", nullable = false, length = 50)
-    private String actionType; // e.g., "CONFIG_UPDATE", "USER_ROLE_CHANGE", "USER_DELETE", "FAQ_CREATE", "FAQ_DELETE"
+    private String actionType; //"CONFIG_UPDATE", "USER_ROLE_CHANGE", "USER_DELETE", "FAQ_CREATE", "FAQ_DELETE"
 
     @Column(name = "entity_type", length = 50)
-    private String entityType; // e.g., "CONFIG", "USER", "FAQ"
+    private String entityType; //"CONFIG", "USER", "FAQ"
 
     @Column(name = "entity_id")
     private Long entityId;

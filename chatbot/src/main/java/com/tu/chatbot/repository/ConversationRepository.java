@@ -14,8 +14,5 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     List<Conversation> findByUserIdOrderByUpdatedAtDesc(Long userId);
     
     Optional<Conversation> findByIdAndUserId(Long id, Long userId);
-    
-    @Query("SELECT c FROM Conversation c WHERE c.userId = :userId ORDER BY c.updatedAt DESC")
-    List<Conversation> findAllByUserIdOrderByUpdatedAtDesc(@Param("userId") Long userId);
 }
 

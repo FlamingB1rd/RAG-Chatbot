@@ -41,13 +41,4 @@ public class ChatController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    //TODO: Nice to have, only implement if I have time:
-//    @GetMapping("/stream")
-//    public Flux<String> chatStream(@RequestParam @NotNull String question) {
-//        return chatClient.prompt()
-//                .user(question.trim())
-//                .stream()
-//                .content();
-//    }
 }

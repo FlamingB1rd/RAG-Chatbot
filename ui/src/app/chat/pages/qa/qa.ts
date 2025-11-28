@@ -108,7 +108,7 @@ export class QaComponent implements OnInit {
   }
 
   deleteFaq(faqId: number, index: number, event: Event): void {
-    event.stopPropagation(); // Prevent expanding/collapsing when clicking delete
+    event.stopPropagation();
     if (!confirm('Сигурни ли сте, че искате да изтриете този въпрос/отговор?')) {
       return;
     }

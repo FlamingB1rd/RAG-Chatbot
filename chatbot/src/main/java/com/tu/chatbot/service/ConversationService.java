@@ -67,8 +67,7 @@ public class ConversationService {
         message.setConversation(conversation);
         message.setRole(role);
         message.setContent(content);
-        
-        // Update conversation title if it's the first user message
+
         if ("user".equals(role) && conversation.getTitle().equals("New Conversation")) {
             String title = content.length() > 50 ? content.substring(0, 50) + "..." : content;
             conversation.setTitle(title);

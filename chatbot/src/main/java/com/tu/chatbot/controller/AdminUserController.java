@@ -74,8 +74,7 @@ public class AdminUserController {
         user.setRoles(roles);
 
         Users savedUser = usersRepository.save(user);
-        
-        // Log the change
+
         String username = ((UserPrincipal) authentication.getPrincipal()).getUsername();
         auditLogService.log(
             "USER_ROLE_CHANGE",
@@ -109,8 +108,7 @@ public class AdminUserController {
         String email = user.getEmail();
         
         usersRepository.deleteById(userId);
-        
-        // Log the deletion
+
         String performedBy = ((UserPrincipal) authentication.getPrincipal()).getUsername();
         auditLogService.log(
             "USER_DELETE",

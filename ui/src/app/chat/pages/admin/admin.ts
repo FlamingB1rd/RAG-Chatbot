@@ -320,11 +320,10 @@ export class AdminComponent implements OnInit {
   onRoleChange(userId: number, newRole: string, currentRoles: string[]) {
     const currentRole = currentRoles.includes('ROLE_ADMIN') ? 'ROLE_ADMIN' : 'ROLE_USER';
     if (newRole === currentRole) {
-      return; // No change
+      return;
     }
 
     if (!confirm(`Сигурни ли сте, че искате да промените ролята на този потребител на ${this.getRoleDisplayName([newRole])}?`)) {
-      // Reset to current role
       this.userRoleChanges[userId] = currentRole;
       return;
     }
@@ -335,13 +334,12 @@ export class AdminComponent implements OnInit {
         this.roleUpdating = null;
         delete this.userRoleChanges[userId];
         this.loadUsers();
-        this.loadAuditLogs(); // Refresh audit logs
+        this.loadAuditLogs();
       },
       error: (err) => {
         console.error('Error updating user role:', err);
         alert('Грешка при промяна на ролята: ' + (err?.message ?? ''));
         this.roleUpdating = null;
-        // Reset to current role on error
         this.userRoleChanges[userId] = currentRole;
       }
     });
@@ -365,7 +363,7 @@ export class AdminComponent implements OnInit {
       next: () => {
         this.userDeleting = null;
         this.loadUsers();
-        this.loadAuditLogs(); // Refresh audit logs
+        this.loadAuditLogs();
       },
       error: (err) => {
         console.error('Error deleting user:', err);
@@ -405,7 +403,6 @@ export class AdminComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading roles:', err);
-        // Fallback to default roles if backend fails
         this.availableRoles = ['ROLE_USER', 'ROLE_ADMIN'];
         this.rolesLoading = false;
       }

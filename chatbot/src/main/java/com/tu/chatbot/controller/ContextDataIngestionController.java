@@ -48,8 +48,7 @@ public class ContextDataIngestionController {
             @RequestParam String url,
             Authentication authentication) {
         dataIngestionService.deleteByUrl(url);
-        
-        // Log the deletion
+
         String username = ((UserPrincipal) authentication.getPrincipal()).getUsername();
         auditLogService.log(
             "URL_DELETE",

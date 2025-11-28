@@ -17,10 +17,4 @@ export class ChatService {
 
     return this.http.post(`/api/chat`, body, { headers, responseType: 'text' });
   }
-
-  // stream(question: string): Observable<string> {
-  //   const url = `/api/chat/stream?question=${encodeURIComponent(question)}`;
-  //
-  //   return this.sse.stream(url).pipe(map((e: any) => String(e.data)));
-  // }
 }

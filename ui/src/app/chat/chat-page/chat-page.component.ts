@@ -48,7 +48,7 @@ export class ChatPageComponent implements OnInit {
   conversations: Conversation[] = [];
   conversationsLoading = false;
   sidebarOpen = true;
-  
+
   @ViewChild('bottom') bottomRef?: ElementRef<HTMLDivElement>;
 
   constructor(
@@ -126,7 +126,6 @@ export class ChatPageComponent implements OnInit {
     this.input = '';
     this.loading = true;
 
-    // Scroll to bottom when user sends a message
     this.scrollToBottomSoon();
 
     this.chatService.send(question, this.currentConversationId).subscribe({
@@ -134,7 +133,7 @@ export class ChatPageComponent implements OnInit {
         this.push('assistant', answerStream);
         this.loading = false;
         this.scrollToBottomSoon();
-        this.loadConversations(); // Refresh to update conversation title
+        this.loadConversations();
       },
       error: (error) => {
         console.error(error);
@@ -154,7 +153,6 @@ export class ChatPageComponent implements OnInit {
 
   onInput(event: Event) {
     const textarea = event.target as HTMLTextAreaElement;
-    // Auto-resize textarea
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
   }

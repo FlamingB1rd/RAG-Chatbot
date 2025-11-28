@@ -628,7 +628,6 @@ button[mat-button] span {
   font-size: 0.875rem;
 }
 
-/* Center role select field in table cell */
 .users-table td .role-select-field {
   display: flex;
   align-items: center;
@@ -636,7 +635,6 @@ button[mat-button] span {
   margin: 0 auto;
 }
 
-/* Spinning Animation */
 .spinning {
   animation: spin 1s linear infinite;
 }

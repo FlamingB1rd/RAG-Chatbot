@@ -24,10 +24,8 @@ public class DatabaseInitializer {
     @Transactional
     public void initialize() {
         try {
-            // Force Hibernate to create tables by accessing repositories
             log.info("Initializing database tables...");
-            
-            // Check if config exists, create default if not
+
             if (configRepository.findFirstByOrderByIdAsc().isEmpty()) {
                 log.info("Creating default chatbot config...");
                 ChatbotConfig defaultConfig = new ChatbotConfig();
@@ -36,8 +34,7 @@ public class DatabaseInitializer {
                 configRepository.save(defaultConfig);
                 log.info("Default chatbot config created successfully");
             }
-            
-            // Access FAQ repository to ensure table exists
+
             faqRepository.count();
             log.info("Database tables initialized successfully");
         } catch (Exception e) {

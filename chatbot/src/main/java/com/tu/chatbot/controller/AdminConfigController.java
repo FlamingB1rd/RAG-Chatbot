@@ -33,8 +33,7 @@ public class AdminConfigController {
             @RequestBody ConfigRequest request,
             Authentication authentication) {
         String username = ((UserPrincipal) authentication.getPrincipal()).getUsername();
-        
-        // Get old config for logging
+
         ConfigService.ConfigResponse oldConfig = configService.getConfig();
         String oldValue = String.format("topK=%d, similarityThreshold=%.2f, cronExpression=%s", 
                 oldConfig.topK(), oldConfig.similarityThreshold(), oldConfig.cronExpression());
@@ -45,8 +44,7 @@ public class AdminConfigController {
         if (request.cronExpression() != null && !request.cronExpression().isEmpty()) {
             configService.updateCronExpression(request.cronExpression(), username);
         }
-        
-        // Log the change
+
         auditLogService.log(
             "CONFIG_UPDATE",
             "CONFIG",

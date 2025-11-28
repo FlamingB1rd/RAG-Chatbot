@@ -23,7 +23,7 @@ public class Conversation {
     private Long userId;
 
     @Column(name = "title", length = 255)
-    private String title; // First message or user-defined title
+    private String title;
 
     @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;

@@ -59,13 +59,10 @@ public class FaqController {
     public ResponseEntity<String> deleteFaq(
             @PathVariable Long id,
             Authentication authentication) {
-        // Get FAQ before deletion for logging
         Faq faq = faqService.getFaqById(id);
         String question = faq.getQuestion();
-        
         faqService.deleteFaq(id);
-        
-        // Log the deletion
+
         String username = ((UserPrincipal) authentication.getPrincipal()).getUsername();
         auditLogService.log(
             "FAQ_DELETE",

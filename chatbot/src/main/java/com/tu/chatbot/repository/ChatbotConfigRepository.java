@@ -8,7 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface ChatbotConfigRepository extends JpaRepository<ChatbotConfig, Long> {
-    // We'll always have a single config row with id=1
     Optional<ChatbotConfig> findFirstByOrderByIdAsc();
 }
 
